@@ -1,0 +1,2254 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0d1117">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Nazareth">
+<title>Laporan Pelayanan — GPIB Nazareth</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   DESIGN TOKENS
+   Palette: deep navy + warm gold + teal + clean whites
+   Signature: the pulsing cross/mic button — sacred + digital
+   ============================================================ */
+:root {
+  --ink:       #13151f;
+  --deep:      #0d1117;
+  --mid:       #161b27;
+  --panel:     #1e2538;
+  --panel2:    #242a3e;
+  --gold:      #c9943a;
+  --gold-lt:   #e8b86d;
+  --gold-dim:  #c9943a18;
+  --teal:      #28a89a;
+  --teal-lt:   #3dcfbf;
+  --teal-dim:  #28a89a18;
+  --green:     #22c55e;
+  --green-dim: #22c55e15;
+  --red:       #ef4444;
+  --red-dim:   #ef444415;
+  --amber:     #f59e0b;
+  --amber-dim: #f59e0b15;
+  --purple:    #8b5cf6;
+  --muted:     #6b7494;
+  --muted2:    #9aa3bf;
+  --border:    #2a3048;
+  --border2:   #323a58;
+  --white:     #ffffff;
+  --radius:    14px;
+  --radius-sm: 10px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  height: 100%;
+  font-family: 'Inter', sans-serif;
+  background: var(--deep);
+  color: var(--white);
+  overflow: hidden;
+}
+
+/* ============================================================ LAYOUT */
+#app {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  max-width: 430px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ============================================================ SETUP SCREEN */
+#setup-screen {
+  position: absolute; inset: 0;
+  background: var(--deep);
+  z-index: 200;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 32px 24px;
+  overflow-y: auto;
+}
+.setup-logo { font-size: 48px; margin-bottom: 16px; }
+.setup-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 22px; font-weight: 700;
+  color: var(--gold-lt); text-align: center;
+  margin-bottom: 6px;
+}
+.setup-sub { font-size: 13px; color: var(--muted2); text-align: center; margin-bottom: 32px; line-height: 1.6; }
+
+.setup-card {
+  width: 100%;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.setup-card h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px; font-weight: 700;
+  color: var(--gold); margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+.setup-label { font-size: 12px; color: var(--muted2); margin-bottom: 6px; display: block; }
+.setup-input {
+  width: 100%; padding: 10px 14px;
+  background: var(--panel2); border: 1px solid var(--border2);
+  border-radius: var(--radius-sm); color: var(--white);
+  font-size: 13px; font-family: 'Inter', sans-serif;
+  outline: none;
+}
+.setup-input:focus { border-color: var(--teal); }
+.setup-select {
+  width: 100%; padding: 10px 14px;
+  background: var(--panel2); border: 1px solid var(--border2);
+  border-radius: var(--radius-sm); color: var(--white);
+  font-size: 13px; font-family: 'Inter', sans-serif;
+  outline: none; appearance: none;
+}
+.setup-hint { font-size: 11px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+.setup-hint a { color: var(--teal); }
+
+.btn-setup {
+  width: 100%; padding: 14px;
+  background: linear-gradient(135deg, var(--gold), #a8762a);
+  border: none; border-radius: var(--radius);
+  color: var(--ink); font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px; font-weight: 700;
+  cursor: pointer; margin-top: 8px;
+}
+
+/* ============================================================ TOP BAR */
+.topbar {
+  background: var(--mid);
+  padding: 12px 18px 10px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.topbar-left { display: flex; flex-direction: column; }
+.topbar-logo {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px; font-weight: 700; color: var(--gold-lt);
+  display: flex; align-items: center; gap: 6px;
+}
+.topbar-role { font-size: 10px; color: var(--muted); margin-top: 1px; }
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+.notif-btn { position: relative; background: none; border: none; font-size: 20px; cursor: pointer; padding: 2px; }
+.notif-badge {
+  position: absolute; top: -2px; right: -2px;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--red); border: 1.5px solid var(--mid);
+  display: none;
+}
+.notif-badge.show { display: block; }
+.settings-btn { background: none; border: none; font-size: 18px; cursor: pointer; color: var(--muted); }
+
+/* ============================================================ MAIN CONTENT */
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
+}
+
+/* ============================================================ SCREENS */
+.screen { display: none; padding: 0 0 8px; animation: fadeIn .2s ease; }
+.screen.active { display: block; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+
+/* ============================================================ BOTTOM NAV */
+.bottom-nav {
+  background: var(--mid);
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-shrink: 0;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+.nav-item {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; gap: 3px;
+  padding: 10px 4px 8px;
+  cursor: pointer; border: none; background: none;
+  color: var(--muted); transition: color .15s;
+}
+.nav-item .ni { font-size: 21px; }
+.nav-item .nl { font-size: 9px; font-weight: 600; }
+.nav-item.active { color: var(--teal); }
+.nav-item.active .ni { filter: drop-shadow(0 0 6px var(--teal)); }
+
+/* ============================================================ SECTION HEADERS */
+.sec-head { padding: 18px 18px 10px; }
+.sec-head h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 20px; font-weight: 700;
+}
+.sec-head p { font-size: 12px; color: var(--muted2); margin-top: 2px; }
+.sec-label {
+  padding: 14px 18px 6px;
+  font-size: 10px; font-weight: 700;
+  color: var(--muted); letter-spacing: 2px; text-transform: uppercase;
+}
+
+/* ============================================================ RECORD SCREEN */
+.record-hero {
+  display: flex; flex-direction: column;
+  align-items: center; padding: 24px 18px 20px;
+  gap: 0;
+}
+
+.record-pulse-ring {
+  position: relative;
+  width: 160px; height: 160px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px;
+}
+.pulse-ring {
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--green-dim) 0%, transparent 70%);
+  animation: pulseRing 2s ease-in-out infinite;
+  opacity: 0;
+}
+.pulse-ring.recording {
+  background: radial-gradient(circle, #ef444420 0%, transparent 70%);
+  animation: pulseRingRec 1s ease-in-out infinite;
+  opacity: 1;
+}
+@keyframes pulseRing { 0%,100%{transform:scale(.9);opacity:0} 50%{transform:scale(1.05);opacity:1} }
+@keyframes pulseRingRec { 0%,100%{transform:scale(.95);opacity:.8} 50%{transform:scale(1.08);opacity:1} }
+
+.mic-btn {
+  width: 130px; height: 130px;
+  border-radius: 50%; border: none; cursor: pointer;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 6px; transition: transform .1s;
+  position: relative; z-index: 1;
+}
+.mic-btn:active { transform: scale(.96); }
+.mic-btn.idle {
+  background: linear-gradient(145deg, #28a89a, #1a7a70);
+  box-shadow: 0 8px 32px #28a89a40;
+}
+.mic-btn.recording {
+  background: linear-gradient(145deg, #ef4444, #c02020);
+  box-shadow: 0 8px 32px #ef444440;
+}
+.mic-btn.processing {
+  background: linear-gradient(145deg, var(--gold), #a0742a);
+  box-shadow: 0 8px 32px var(--gold-dim);
+}
+.mic-icon { font-size: 40px; line-height: 1; }
+.mic-label { font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 700; color: var(--white); }
+
+/* WAVEFORM */
+.waveform-wrap {
+  height: 40px; display: flex; align-items: center;
+  gap: 3px; margin-bottom: 12px; min-height: 40px;
+}
+.w-bar {
+  width: 3px; background: var(--red); border-radius: 2px;
+  transform-origin: bottom;
+  animation: waveAnim .5s ease-in-out infinite;
+}
+.w-bar:nth-child(1){height:10px;animation-delay:0s}
+.w-bar:nth-child(2){height:20px;animation-delay:.08s}
+.w-bar:nth-child(3){height:14px;animation-delay:.16s}
+.w-bar:nth-child(4){height:28px;animation-delay:.24s}
+.w-bar:nth-child(5){height:18px;animation-delay:.32s}
+.w-bar:nth-child(6){height:24px;animation-delay:.16s}
+.w-bar:nth-child(7){height:12px;animation-delay:.08s}
+.w-bar:nth-child(8){height:22px;animation-delay:.24s}
+.w-bar:nth-child(9){height:16px;animation-delay:.32s}
+@keyframes waveAnim { 0%,100%{transform:scaleY(1)} 50%{transform:scaleY(.3)} }
+
+.record-timer {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 32px; font-weight: 700;
+  color: var(--white); letter-spacing: 3px;
+  margin-bottom: 8px;
+}
+.record-hint {
+  font-size: 12px; color: var(--muted2);
+  text-align: center; max-width: 260px; line-height: 1.6;
+}
+
+/* PREVIEW CARD */
+.preview-wrap { padding: 0 18px 16px; }
+.preview-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+.preview-head {
+  font-size: 10px; font-weight: 700; color: var(--muted);
+  letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.audio-row {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+}
+.play-btn {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: var(--teal); border: none; cursor: pointer;
+  font-size: 14px; color: var(--white);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.progress-track { flex: 1; height: 4px; background: var(--border2); border-radius: 2px; overflow: hidden; cursor: pointer; }
+.progress-fill-bar { height: 100%; background: var(--teal); border-radius: 2px; width: 0%; transition: width .3s; }
+.audio-dur { font-size: 11px; color: var(--muted); white-space: nowrap; }
+
+.ai-status-row {
+  background: var(--panel2); border-radius: var(--radius-sm);
+  padding: 10px 12px; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px;
+}
+.ai-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.ai-dot.idle     { background: var(--muted); }
+.ai-dot.loading  { background: var(--amber); animation: blink .8s infinite; }
+.ai-dot.done     { background: var(--green); }
+.ai-dot.error    { background: var(--red); }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+.transcript-box {
+  background: var(--deep); border-radius: var(--radius-sm);
+  padding: 12px; margin-bottom: 14px;
+  font-size: 12px; color: #a8b4d0; line-height: 1.75;
+  max-height: 120px; overflow-y: auto;
+  display: none;
+}
+.transcript-box.show { display: block; }
+
+.tags-preview { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 14px; }
+.tg {
+  padding: 3px 9px; border-radius: 12px;
+  font-size: 10px; font-weight: 700;
+}
+.tg-teal   { background: var(--teal-dim);  color: var(--teal-lt); border: 1px solid #28a89a30; }
+.tg-amber  { background: var(--amber-dim); color: var(--amber);   border: 1px solid #f59e0b30; }
+.tg-red    { background: var(--red-dim);   color: var(--red);     border: 1px solid #ef444430; }
+.tg-green  { background: var(--green-dim); color: var(--green);   border: 1px solid #22c55e30; }
+.tg-purple { background: #8b5cf615;        color: var(--purple);  border: 1px solid #8b5cf630; }
+.tg-gold   { background: var(--gold-dim);  color: var(--gold-lt); border: 1px solid #c9943a30; }
+
+.btn-send {
+  width: 100%; padding: 13px;
+  background: linear-gradient(135deg, var(--green), #16a34a);
+  border: none; border-radius: var(--radius-sm);
+  color: var(--white); font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px; font-weight: 700; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.btn-send:disabled { opacity: .5; cursor: not-allowed; }
+.btn-discard {
+  width: 100%; padding: 9px;
+  background: none; border: 1px solid var(--border2);
+  border-radius: var(--radius-sm); color: var(--muted);
+  font-size: 12px; cursor: pointer; margin-top: 8px;
+}
+
+/* RECENT REPORTS */
+.report-item {
+  margin: 0 18px 8px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  display: flex; align-items: center; gap: 10px;
+  cursor: pointer;
+}
+.rep-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.rep-info { flex: 1; min-width: 0; }
+.rep-title { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rep-meta  { font-size: 10px; color: var(--muted); margin-top: 2px; }
+.rep-badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; white-space: nowrap; flex-shrink: 0; }
+.badge-done    { background: var(--green-dim); color: var(--green); }
+.badge-pending { background: var(--amber-dim); color: var(--amber); }
+.badge-process { background: var(--teal-dim);  color: var(--teal); }
+
+/* ============================================================ OPERATOR SCREEN */
+.stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 18px 14px; }
+.stat-card {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 14px;
+}
+.stat-val {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 26px; font-weight: 700;
+}
+.stat-lbl { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+.inbox-item {
+  margin: 0 18px 8px;
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+}
+.inbox-top {
+  padding: 12px 14px; display: flex; align-items: center;
+  gap: 10px; cursor: pointer;
+}
+.inbox-av {
+  width: 38px; height: 38px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.inbox-av.new    { background: var(--green-dim); }
+.inbox-av.amber  { background: var(--amber-dim); }
+.inbox-av.purple { background: #8b5cf615; }
+.inbox-meta { flex: 1; min-width: 0; }
+.inbox-name   { font-size: 13px; font-weight: 600; }
+.inbox-detail { font-size: 10px; color: var(--muted); margin-top: 1px; }
+.inbox-time   { font-size: 10px; color: var(--muted); flex-shrink: 0; }
+.inbox-body {
+  border-top: 1px solid var(--border);
+  padding: 14px; display: none;
+  background: var(--mid);
+}
+.inbox-body.open { display: block; }
+.transcript-excerpt {
+  font-size: 12px; color: var(--muted2); line-height: 1.7;
+  font-style: italic; border-left: 2px solid var(--border2);
+  padding-left: 10px; margin-bottom: 12px;
+}
+.op-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
+.op-actions { display: flex; gap: 8px; }
+.btn-submit-op {
+  flex: 1; padding: 10px; border-radius: var(--radius-sm);
+  background: var(--teal); border: none; cursor: pointer;
+  color: var(--white); font-size: 12px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; gap: 4px;
+}
+.btn-edit-op {
+  padding: 10px 14px; border-radius: var(--radius-sm);
+  background: var(--panel2); border: 1px solid var(--border2);
+  cursor: pointer; color: var(--muted); font-size: 12px;
+}
+
+/* ============================================================ DASHBOARD SCREEN */
+.kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 18px 14px; }
+.kpi-card {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 14px;
+  position: relative; overflow: hidden;
+}
+.kpi-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+}
+.kpi-card.k-gold::before   { background: var(--gold); }
+.kpi-card.k-teal::before   { background: var(--teal); }
+.kpi-card.k-red::before    { background: var(--red); }
+.kpi-card.k-green::before  { background: var(--green); }
+.kpi-val {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 28px; font-weight: 700;
+}
+.kpi-card.k-gold  .kpi-val { color: var(--gold-lt); }
+.kpi-card.k-teal  .kpi-val { color: var(--teal-lt); }
+.kpi-card.k-red   .kpi-val { color: var(--red); }
+.kpi-card.k-green .kpi-val { color: var(--green); }
+.kpi-lbl { font-size: 10px; color: var(--muted); margin-top: 3px; }
+
+.chart-wrap {
+  margin: 0 18px 14px;
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px;
+}
+.chart-ttl { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; }
+.bar-r { display: flex; align-items: center; gap: 8px; margin-bottom: 9px; }
+.bar-lbl { font-size: 11px; color: var(--muted2); width: 72px; flex-shrink: 0; }
+.bar-trk { flex: 1; height: 7px; background: var(--border2); border-radius: 4px; overflow: hidden; }
+.bar-fil { height: 100%; border-radius: 4px; transition: width .8s ease; }
+.bar-num { font-size: 11px; color: var(--muted); width: 36px; text-align: right; }
+
+.alert-item {
+  margin: 0 18px 8px;
+  background: #ef444410; border: 1px solid #ef444428;
+  border-radius: var(--radius); padding: 12px 14px;
+  display: flex; align-items: flex-start; gap: 10px;
+}
+.alert-pulse {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--red); flex-shrink: 0; margin-top: 4px;
+  animation: blink 1s infinite;
+}
+.alert-info { flex: 1; }
+.alert-info h5 { font-size: 12px; font-weight: 600; }
+.alert-info p  { font-size: 11px; color: var(--muted2); margin-top: 2px; }
+.alert-time    { font-size: 10px; color: var(--muted); flex-shrink: 0; }
+
+/* ============================================================ AI PANEL */
+.ai-chat-wrap {
+  margin: 0 18px 14px;
+  background: var(--deep); border: 1px solid #c9943a28;
+  border-radius: var(--radius); overflow: hidden;
+}
+.ai-chat-head {
+  padding: 12px 14px; background: #c9943a10;
+  border-bottom: 1px solid #c9943a20;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 700; color: var(--gold-lt);
+}
+.ai-messages { padding: 12px 14px; min-height: 80px; max-height: 200px; overflow-y: auto; }
+.ai-msg { margin-bottom: 10px; }
+.ai-msg.user .ai-bubble {
+  background: var(--panel2); border-radius: 10px 10px 2px 10px;
+  padding: 8px 12px; font-size: 12px; color: var(--muted2);
+  display: inline-block; max-width: 90%;
+}
+.ai-msg.bot .ai-bubble {
+  background: #c9943a12; border: 1px solid #c9943a20;
+  border-radius: 2px 10px 10px 10px;
+  padding: 8px 12px; font-size: 12px; color: #c8d4e8;
+  line-height: 1.7; display: block;
+}
+.ai-input-row {
+  padding: 10px 14px; border-top: 1px solid var(--border);
+  display: flex; gap: 8px; align-items: center;
+}
+.ai-input-field {
+  flex: 1; background: var(--panel); border: 1px solid var(--border2);
+  border-radius: 8px; padding: 8px 12px;
+  font-size: 12px; color: var(--white); outline: none;
+  font-family: 'Inter', sans-serif;
+}
+.ai-input-field::placeholder { color: var(--muted); }
+.ai-send-btn {
+  width: 34px; height: 34px; border-radius: 8px;
+  background: var(--gold); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
+}
+
+/* ============================================================ TOAST */
+.toast {
+  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--panel); border: 1px solid var(--border2);
+  border-radius: 20px; padding: 10px 20px;
+  font-size: 13px; font-weight: 600; color: var(--white);
+  white-space: nowrap; z-index: 999;
+  opacity: 0; transition: all .3s; pointer-events: none;
+  box-shadow: 0 8px 32px #00000060;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.success { border-color: #22c55e40; color: var(--green); }
+.toast.error   { border-color: #ef444440; color: var(--red); }
+.toast.info    { border-color: #c9943a40; color: var(--gold-lt); }
+
+/* ============================================================ LOADING SPINNER */
+.spinner {
+  display: inline-block; width: 14px; height: 14px;
+  border: 2px solid #ffffff30; border-top-color: var(--white);
+  border-radius: 50%; animation: spin .7s linear infinite;
+  vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ============================================================ EMPTY STATE */
+.empty-state {
+  text-align: center; padding: 48px 24px;
+  color: var(--muted);
+}
+.empty-state .es-icon { font-size: 40px; margin-bottom: 12px; opacity: .5; }
+.empty-state p { font-size: 13px; line-height: 1.6; }
+
+/* ============================================================ SCROLLBAR */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* ============================================================ MODAL */
+.modal-overlay {
+  position: fixed; inset: 0; background: #00000080;
+  z-index: 100; display: flex; align-items: flex-end;
+  opacity: 0; pointer-events: none; transition: opacity .2s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal-sheet {
+  width: 100%; background: var(--mid);
+  border-radius: 20px 20px 0 0;
+  padding: 20px 20px 32px;
+  transform: translateY(100%); transition: transform .3s ease;
+  max-height: 85vh; overflow-y: auto;
+}
+.modal-overlay.open .modal-sheet { transform: translateY(0); }
+.modal-handle { width: 36px; height: 4px; background: var(--border2); border-radius: 2px; margin: 0 auto 16px; }
+.modal-title { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 14px; }
+
+/* ============================================================ FORM ELEMENTS */
+.form-group { margin-bottom: 14px; }
+.form-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; display: block; }
+.form-input {
+  width: 100%; padding: 10px 14px;
+  background: var(--panel2); border: 1px solid var(--border2);
+  border-radius: var(--radius-sm); color: var(--white);
+  font-size: 13px; font-family: 'Inter', sans-serif; outline: none;
+}
+.form-input:focus { border-color: var(--teal); }
+.form-textarea {
+  width: 100%; padding: 10px 14px;
+  background: var(--panel2); border: 1px solid var(--border2);
+  border-radius: var(--radius-sm); color: var(--white);
+  font-size: 12px; font-family: 'Inter', sans-serif;
+  outline: none; resize: none; min-height: 80px; line-height: 1.6;
+}
+.form-textarea:focus { border-color: var(--teal); }
+.btn-primary {
+  width: 100%; padding: 13px;
+  background: var(--teal); border: none;
+  border-radius: var(--radius-sm); color: var(--white);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px; font-weight: 700; cursor: pointer;
+}
+
+/* divider */
+.divider { height: 1px; background: var(--border); margin: 8px 18px; }
+
+/* safe area for iOS */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .bottom-nav { padding-bottom: max(env(safe-area-inset-bottom), 8px); }
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ============================================================ SETUP SCREEN -->
+  <div id="setup-screen">
+    <div class="setup-logo">⛪</div>
+    <div class="setup-title">Laporan Pelayanan<br>GPIB Nazareth</div>
+    <div class="setup-sub">Masukkan konfigurasi awal.<br>Hanya perlu dilakukan sekali.</div>
+
+    <div class="setup-card">
+      <h3>🤖 Gemini API Key</h3>
+      <label class="setup-label">API Key dari Google AI Studio</label>
+      <input class="setup-input" type="password" id="cfg-apikey" placeholder="AIza...">
+      <p class="setup-hint">Dapatkan gratis di <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a> → Get API Key → Copy</p>
+    </div>
+
+    <div class="setup-card">
+      <h3>👤 Profil Pengguna</h3>
+      <label class="setup-label">Nama Lengkap</label>
+      <input class="setup-input" type="text" id="cfg-name" placeholder="Pnt. Ratna Sari">
+      <label class="setup-label" style="margin-top:12px">Role</label>
+      <select class="setup-select" id="cfg-role">
+        <option value="pelapor">Pelapor (Majelis / Diaken)</option>
+        <option value="operator">Operator Sekretariat</option>
+        <option value="phmj">PHMJ (Eksekutif)</option>
+      </select>
+      <label class="setup-label" style="margin-top:12px">Bidang / Sektor</label>
+      <input class="setup-input" type="text" id="cfg-sector" placeholder="Sektor 3 / Diakonia / PKB">
+    </div>
+
+    <div class="setup-card">
+      <h3>📊 Google Sheets — Sinkronisasi Otomatis</h3>
+      <label class="setup-label">Apps Script URL (dari deployment)</label>
+      <input class="setup-input" type="text" id="cfg-sheetid" placeholder="https://script.google.com/macros/s/...">
+      <p class="setup-hint">
+        Opsional — bisa diisi belakangan di Pengaturan.<br>
+        Cara deploy: buka <strong>script.google.com</strong> → paste kode Apps Script → Deploy → Web App → copy URL → paste di sini.
+      </p>
+    </div>
+
+    <button class="btn-setup" onclick="saveSetup()">Mulai Gunakan Aplikasi →</button>
+  </div>
+
+  <!-- ============================================================ TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo">⛪ <span>Nazareth</span></div>
+      <div class="topbar-role" id="topbar-role">Memuat...</div>
+    </div>
+    <div class="topbar-right">
+      <button class="notif-btn" onclick="showNotifPanel()">
+        🔔<span class="notif-badge" id="notif-badge"></span>
+      </button>
+      <button class="settings-btn" onclick="openSettings()">⚙️</button>
+    </div>
+  </div>
+
+  <!-- ============================================================ MAIN CONTENT -->
+  <div class="main-content" id="main-content">
+
+    <!-- ===== SCREEN: REKAM ===== -->
+    <div class="screen active" id="screen-rekam">
+      <div class="sec-head">
+        <h2 id="rekam-greeting">Rekam Laporan</h2>
+        <p id="rekam-date"></p>
+      </div>
+
+      <div class="record-hero">
+        <div class="record-pulse-ring">
+          <div class="pulse-ring" id="pulse-ring"></div>
+          <button class="mic-btn idle" id="mic-btn" onclick="toggleRecord()">
+            <span class="mic-icon" id="mic-icon">🎙️</span>
+            <span class="mic-label" id="mic-label">Rekam</span>
+          </button>
+        </div>
+
+        <div class="waveform-wrap" id="waveform-wrap" style="display:none">
+          <div class="w-bar"></div><div class="w-bar"></div><div class="w-bar"></div>
+          <div class="w-bar"></div><div class="w-bar"></div><div class="w-bar"></div>
+          <div class="w-bar"></div><div class="w-bar"></div><div class="w-bar"></div>
+        </div>
+
+        <div class="record-timer" id="record-timer" style="display:none">0:00</div>
+        <p class="record-hint" id="record-hint">Ceritakan: nama kegiatan, tanggal, lokasi, siapa yang hadir, dan tindak lanjut yang diperlukan.</p>
+      </div>
+
+      <!-- HTTPS WARNING — tampil otomatis jika tidak aman -->
+      <div id="https-warning" style="display:none; margin:0 18px 16px;">
+        <div style="background:#ef444412; border:1px solid #ef444440; border-radius:12px; padding:16px;">
+          <div style="font-size:13px; font-weight:700; color:#ef4444; margin-bottom:8px;">⚠️ Mikrofon Memerlukan HTTPS</div>
+          <div style="font-size:12px; color:#9aa3bf; line-height:1.7; margin-bottom:12px;">
+            Chrome Android memblokir akses mikrofon di halaman <code style="color:#f0cc7a">file://</code>. 
+            Agar mikrofon berfungsi, app harus diakses melalui HTTPS.<br><br>
+            <strong style="color:#e8b86d">Solusi cepat — pilih salah satu:</strong>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <button onclick="openHostingGuide()" style="background:#2ab5a520; border:1px solid #2ab5a540; border-radius:8px; padding:10px 14px; color:#3dcfbf; font-size:12px; font-weight:600; cursor:pointer; text-align:left;">
+              🌐 Opsi 1 — Host di GitHub Pages (gratis, 5 menit)
+            </button>
+            <button onclick="openNetlifyGuide()" style="background:#c9943a18; border:1px solid #c9943a40; border-radius:8px; padding:10px 14px; color:#e8b86d; font-size:12px; font-weight:600; cursor:pointer; text-align:left;">
+              ⚡ Opsi 2 — Host di Netlify Drop (gratis, 1 menit)
+            </button>
+            <button onclick="tryInputFallback()" style="background:#22c55e15; border:1px solid #22c55e40; border-radius:8px; padding:10px 14px; color:#22c55e; font-size:12px; font-weight:600; cursor:pointer; text-align:left;">
+              ✍️ Opsi 3 — Input teks manual (sementara)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- INPUT MANUAL FALLBACK -->
+      <div id="manual-input-wrap" style="display:none; padding:0 18px 16px;">
+        <div style="background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:16px;">
+          <div style="font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">✍️ Input Laporan Manual</div>
+          <div style="margin-bottom:10px;">
+            <label style="font-size:11px; color:var(--muted2); display:block; margin-bottom:4px;">Nama Kegiatan *</label>
+            <input id="man-judul" type="text" placeholder="Contoh: Pelawatan Sektor 3" style="width:100%; background:var(--panel2); border:1px solid var(--border2); border-radius:8px; padding:10px 12px; color:var(--white); font-size:13px; outline:none; font-family:Inter,sans-serif;">
+          </div>
+          <div style="margin-bottom:10px;">
+            <label style="font-size:11px; color:var(--muted2); display:block; margin-bottom:4px;">Ceritakan Kegiatan *</label>
+            <textarea id="man-cerita" rows="5" placeholder="Ceritakan: tanggal, lokasi, siapa yang hadir, apa yang terjadi, dan apakah ada tindak lanjut yang diperlukan..." style="width:100%; background:var(--panel2); border:1px solid var(--border2); border-radius:8px; padding:10px 12px; color:var(--white); font-size:13px; outline:none; font-family:Inter,sans-serif; resize:none; line-height:1.6;"></textarea>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px;">
+            <div>
+              <label style="font-size:11px; color:var(--muted2); display:block; margin-bottom:4px;">Tanggal</label>
+              <input id="man-tanggal" type="date" style="width:100%; background:var(--panel2); border:1px solid var(--border2); border-radius:8px; padding:9px 12px; color:var(--white); font-size:13px; outline:none; font-family:Inter,sans-serif; color-scheme:dark;">
+            </div>
+            <div>
+              <label style="font-size:11px; color:var(--muted2); display:block; margin-bottom:4px;">Jml Hadir</label>
+              <input id="man-hadir" type="number" placeholder="0" min="0" style="width:100%; background:var(--panel2); border:1px solid var(--border2); border-radius:8px; padding:9px 12px; color:var(--white); font-size:13px; outline:none; font-family:Inter,sans-serif;">
+            </div>
+          </div>
+          <button onclick="processManualInput()" style="width:100%; padding:12px; background:linear-gradient(135deg,#2ab5a5,#1a7a70); border:none; border-radius:8px; color:white; font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">
+            🤖 Proses dengan AI
+          </button>
+          <button onclick="hideManualInput()" style="width:100%; padding:8px; background:none; border:1px solid var(--border2); border-radius:8px; color:var(--muted); font-size:12px; cursor:pointer; margin-top:8px;">
+            ✕ Tutup
+          </button>
+        </div>
+      </div>
+
+      <div class="preview-wrap" id="preview-wrap" style="display:none">
+        <div class="preview-card">
+          <div class="preview-head">
+            <span>Pratinjau Rekaman</span>
+            <span id="rec-duration-label" style="color:var(--teal)">0:00</span>
+          </div>
+          <div class="audio-row">
+            <button class="play-btn" id="play-btn" onclick="playPreview()">▶</button>
+            <div class="progress-track" onclick="seekAudio(event)">
+              <div class="progress-fill-bar" id="progress-fill"></div>
+            </div>
+            <span class="audio-dur" id="audio-dur-label">0:00</span>
+          </div>
+
+          <div class="ai-status-row" id="ai-status-row">
+            <div class="ai-dot loading" id="ai-dot"></div>
+            <span id="ai-status-text">Mengirim ke Gemini AI...</span>
+          </div>
+
+          <div class="transcript-box" id="transcript-box"></div>
+          <div class="tags-preview" id="tags-preview"></div>
+
+          <button class="btn-send" id="btn-send" onclick="submitReport()" disabled>
+            <span class="spinner" id="send-spinner" style="display:none"></span>
+            <span id="btn-send-label">📤 Simpan Laporan</span>
+          </button>
+          <button class="btn-discard" onclick="discardRecording()">✕ Rekam ulang</button>
+        </div>
+      </div>
+
+      <div class="sec-label" id="recent-label">Laporan Terbaru</div>
+      <div id="recent-list">
+        <div class="empty-state">
+          <div class="es-icon">📋</div>
+          <p>Belum ada laporan.<br>Tekan tombol rekam untuk mulai.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SCREEN: OPERATOR ===== -->
+    <div class="screen" id="screen-operator">
+      <div class="sec-head">
+        <h2>Inbox Laporan</h2>
+        <p id="op-date-label"></p>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-card">
+          <div class="stat-val" id="op-stat-pending" style="color:var(--amber)">0</div>
+          <div class="stat-lbl">Belum diproses</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="op-stat-done" style="color:var(--green)">0</div>
+          <div class="stat-lbl">Selesai hari ini</div>
+        </div>
+      </div>
+
+      <div class="sec-label">Antrian — Perlu Diproses</div>
+      <div id="op-inbox-list">
+        <div class="empty-state">
+          <div class="es-icon">✅</div>
+          <p>Semua laporan sudah diproses.<br>Tidak ada antrian saat ini.</p>
+        </div>
+      </div>
+
+      <div class="sec-label">Selesai Diproses</div>
+      <div id="op-done-list"></div>
+    </div>
+
+    <!-- ===== SCREEN: DASHBOARD ===== -->
+    <div class="screen" id="screen-dashboard">
+      <div class="sec-head">
+        <h2>Dashboard PHMJ</h2>
+        <p id="dash-update-label">Memuat data...</p>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card k-gold">
+          <div class="kpi-val" id="kpi-total">0</div>
+          <div class="kpi-lbl">Total Laporan</div>
+        </div>
+        <div class="kpi-card k-teal">
+          <div class="kpi-val" id="kpi-hadir">0</div>
+          <div class="kpi-lbl">Total Kehadiran</div>
+        </div>
+        <div class="kpi-card k-red">
+          <div class="kpi-val" id="kpi-segera">0</div>
+          <div class="kpi-lbl">🚨 Segera</div>
+        </div>
+        <div class="kpi-card k-green">
+          <div class="kpi-val" id="kpi-selesai">0</div>
+          <div class="kpi-lbl">Diproses</div>
+        </div>
+      </div>
+
+      <div class="chart-wrap">
+        <div class="chart-ttl">Laporan per Kategori</div>
+        <div id="category-chart"></div>
+      </div>
+
+      <div class="sec-label">🚨 Perlu Perhatian Segera</div>
+      <div id="alert-list">
+        <div class="empty-state" style="padding:20px 24px">
+          <p style="font-size:12px">Tidak ada item mendesak saat ini.</p>
+        </div>
+      </div>
+
+      <div class="sec-label">✦ Tanya AI — Analisis Laporan</div>
+      <div class="ai-chat-wrap">
+        <div class="ai-chat-head">
+          <span>✦</span> Asisten Pastoral Nazareth
+        </div>
+        <div class="ai-messages" id="ai-messages">
+          <div class="ai-msg bot">
+            <div class="ai-bubble">Halo! Saya bisa membantu menganalisis laporan pelayanan. Coba tanya: "Sektor mana yang paling banyak tindak lanjut?" atau "Ringkaskan laporan diakonia bulan ini."</div>
+          </div>
+        </div>
+        <div class="ai-input-row">
+          <input class="ai-input-field" id="ai-query" placeholder="Tanya tentang laporan..." onkeydown="if(event.key==='Enter')sendAiQuery()">
+          <button class="ai-send-btn" onclick="sendAiQuery()">→</button>
+        </div>
+      </div>
+
+      <div class="sec-label">Semua Laporan</div>
+      <div id="all-reports-list"></div>
+    </div>
+
+    <!-- ===== SCREEN: PROFIL ===== -->
+    <div class="screen" id="screen-profil">
+      <div class="sec-head">
+        <h2>Profil & Pengaturan</h2>
+      </div>
+      <div style="padding:0 18px">
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px">
+          <div style="font-size:32px;margin-bottom:8px">👤</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700" id="profile-name">-</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px" id="profile-role">-</div>
+          <div style="font-size:12px;color:var(--teal);margin-top:2px" id="profile-sector">-</div>
+        </div>
+
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px">
+          <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Statistik Saya</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div style="text-align:center;padding:12px;background:var(--panel2);border-radius:10px">
+              <div style="font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:var(--gold-lt)" id="my-total">0</div>
+              <div style="font-size:10px;color:var(--muted)">Total laporan</div>
+            </div>
+            <div style="text-align:center;padding:12px;background:var(--panel2);border-radius:10px">
+              <div style="font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:var(--teal-lt)" id="my-month">0</div>
+              <div style="font-size:10px;color:var(--muted)">Bulan ini</div>
+            </div>
+          </div>
+        </div>
+
+        <button onclick="openSettings()" style="width:100%;padding:12px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:13px;cursor:pointer;margin-bottom:8px;text-align:left;display:flex;align-items:center;gap:10px">⚙️ <span>Ubah Konfigurasi API</span></button>
+        <button onclick="syncPendingToSheets()" style="width:100%;padding:12px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);color:var(--teal-lt);font-size:13px;cursor:pointer;margin-bottom:8px;text-align:left;display:flex;align-items:center;gap:10px">🔄 <span id="sync-btn-label">Sinkron Ulang ke Google Sheets</span></button>
+        <button onclick="testSheetsConnection()" style="width:100%;padding:12px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);color:var(--gold-lt);font-size:13px;cursor:pointer;margin-bottom:8px;text-align:left;display:flex;align-items:center;gap:10px">🔌 <span>Test Koneksi Sheets</span></button>
+        <button onclick="exportData()" style="width:100%;padding:12px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:13px;cursor:pointer;margin-bottom:8px;text-align:left;display:flex;align-items:center;gap:10px">📤 <span>Export Semua Laporan (JSON)</span></button>
+        <button onclick="clearAllData()" style="width:100%;padding:12px;background:var(--red-dim);border:1px solid #ef444430;border-radius:var(--radius);color:var(--red);font-size:13px;cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px">🗑️ <span>Hapus Semua Data Lokal</span></button>
+      </div>
+    </div>
+
+  </div><!-- end main-content -->
+
+  <!-- ============================================================ BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" id="nav-rekam" onclick="switchScreen('rekam')">
+      <span class="ni">🎙️</span><span class="nl" id="nav-rekam-lbl">Rekam</span>
+    </button>
+    <button class="nav-item" id="nav-operator" onclick="switchScreen('operator')">
+      <span class="ni">📥</span><span class="nl">Operator</span>
+    </button>
+    <button class="nav-item" id="nav-dashboard" onclick="switchScreen('dashboard')">
+      <span class="ni">📊</span><span class="nl">Dashboard</span>
+    </button>
+    <button class="nav-item" id="nav-profil" onclick="switchScreen('profil')">
+      <span class="ni">👤</span><span class="nl">Profil</span>
+    </button>
+  </nav>
+
+</div><!-- end app -->
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-overlay" id="modal-settings" onclick="closeModal('settings')">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title">⚙️ Pengaturan</div>
+    <div class="form-group">
+      <label class="form-label">Nama Lengkap</label>
+      <input class="form-input" id="set-name" placeholder="Nama anda">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Role</label>
+      <select class="form-input" id="set-role">
+        <option value="pelapor">Pelapor (Majelis / Diaken)</option>
+        <option value="operator">Operator Sekretariat</option>
+        <option value="phmj">PHMJ (Eksekutif)</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Bidang / Sektor</label>
+      <input class="form-input" id="set-sector" placeholder="Sektor 3">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Gemini API Key</label>
+      <input class="form-input" type="password" id="set-apikey" placeholder="AIza...">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Apps Script URL (Google Sheets)</label>
+      <input class="form-input" type="text" id="set-scripturl" placeholder="https://script.google.com/macros/s/...">
+    </div>
+    <button class="btn-primary" onclick="saveSettings()">Simpan Pengaturan</button>
+  </div>
+</div>
+
+<!-- HOSTING GUIDE MODAL -->
+<div class="modal-overlay" id="modal-hosting" onclick="closeModal('hosting')">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🌐 Host di GitHub Pages (Gratis)</div>
+    <div style="font-size:13px; color:#9aa3bf; line-height:1.9;">
+      <strong style="color:#e8b86d">Langkah 1</strong> — Buka <span style="color:#3dcfbf">github.com</span> → daftar akun gratis<br>
+      <strong style="color:#e8b86d">Langkah 2</strong> — Klik <strong>+</strong> → New repository → beri nama <code>nazareth-app</code> → Public → Create<br>
+      <strong style="color:#e8b86d">Langkah 3</strong> → Klik <strong>Add file → Upload files</strong> → upload file <code>nazareth-app.html</code><br>
+      <strong style="color:#e8b86d">Langkah 4</strong> → Settings → Pages → Source: <strong>main branch</strong> → Save<br>
+      <strong style="color:#e8b86d">Langkah 5</strong> → URL app akan menjadi: <code>https://[username].github.io/nazareth-app/nazareth-app.html</code>
+    </div>
+    <div style="background:#22c55e12; border:1px solid #22c55e30; border-radius:8px; padding:12px; margin:14px 0; font-size:12px; color:#22c55e;">
+      ✅ Setelah di GitHub Pages, mikrofon akan langsung berfungsi karena URL sudah HTTPS.
+    </div>
+    <div style="font-size:12px; color:#6b7494; margin-bottom:14px;">
+      <strong style="color:#e8b86d">Alternatif lebih cepat — Netlify Drop:</strong><br>
+      Buka <span style="color:#3dcfbf">netlify.com/drop</span> → seret file nazareth-app.html ke halaman → dapat URL HTTPS dalam 30 detik.
+    </div>
+    <button class="btn-primary" onclick="closeModal('hosting')">Mengerti, Tutup</button>
+  </div>
+</div>
+<div class="modal-overlay" id="modal-detail" onclick="closeModal('detail')">
+  <div class="modal-sheet" onclick="event.stopPropagation()" id="detail-content"></div>
+</div>
+
+<script>
+// ============================================================
+// STATE & STORAGE
+// ============================================================
+const DB_KEY   = 'nazareth_reports';
+const CONF_KEY = 'nazareth_config';
+
+let config = {};
+let reports = [];
+let mediaRecorder = null;
+let audioChunks  = [];
+let audioBlob    = null;
+let audioURL     = null;
+let audioEl      = null;
+let isRecording  = false;
+let recTimer     = null;
+let recSeconds   = 0;
+let aiResult     = null;
+let currentScreen = 'rekam';
+
+// ============================================================
+// INIT
+// ============================================================
+function init() {
+  config  = JSON.parse(localStorage.getItem(CONF_KEY) || '{}');
+  reports = JSON.parse(localStorage.getItem(DB_KEY)   || '[]');
+
+  if (!config.name || !config.apikey) {
+    document.getElementById('setup-screen').style.display = 'flex';
+    return;
+  }
+  document.getElementById('setup-screen').style.display = 'none';
+  applyConfig();
+  renderAll();
+}
+
+function applyConfig() {
+  const roleMap = { pelapor:'Pelapor', operator:'Operator Sekretariat', phmj:'PHMJ' };
+  document.getElementById('topbar-role').textContent =
+    (config.name || '-') + ' · ' + (roleMap[config.role] || config.role || '-');
+
+  const now = new Date();
+  const opts = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
+  const dateStr = now.toLocaleDateString('id-ID', opts);
+  document.getElementById('rekam-greeting').textContent = 'Selamat ' + greeting() + ', ' + firstName(config.name);
+  document.getElementById('rekam-date').textContent = dateStr;
+  document.getElementById('op-date-label').textContent = dateStr;
+  document.getElementById('profile-name').textContent   = config.name   || '-';
+  document.getElementById('profile-role').textContent   = roleMap[config.role] || '-';
+  document.getElementById('profile-sector').textContent = config.sector || '-';
+
+  // Show/hide nav items based on role
+  if (config.role === 'pelapor') {
+    document.getElementById('nav-rekam-lbl').textContent = 'Rekam';
+  }
+}
+
+function greeting() {
+  const h = new Date().getHours();
+  if (h < 11) return 'pagi';
+  if (h < 15) return 'siang';
+  if (h < 18) return 'sore';
+  return 'malam';
+}
+function firstName(name) { return (name||'').split(' ')[0] || 'Pelayan'; }
+
+// ============================================================
+// SETUP
+// ============================================================
+function saveSetup() {
+  const apikey = document.getElementById('cfg-apikey').value.trim();
+  const name   = document.getElementById('cfg-name').value.trim();
+  const role   = document.getElementById('cfg-role').value;
+  const sector = document.getElementById('cfg-sector').value.trim();
+  const sheetid= document.getElementById('cfg-sheetid').value.trim();
+
+  if (!name) { showToast('Masukkan nama lengkap', 'error'); return; }
+  if (!apikey) { showToast('Masukkan API Key Gemini', 'error'); return; }
+
+  config = { name, apikey, role, sector, scriptUrl: sheetid };
+  localStorage.setItem(CONF_KEY, JSON.stringify(config));
+
+  document.getElementById('setup-screen').style.display = 'none';
+  applyConfig();
+  renderAll();
+  showToast('✅ Selamat datang, ' + firstName(name) + '!', 'success');
+}
+
+// ============================================================
+// SCREEN SWITCHING
+// ============================================================
+function switchScreen(name) {
+  currentScreen = name;
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  document.getElementById('nav-' + name).classList.add('active');
+
+  if (name === 'dashboard') renderDashboard();
+  if (name === 'operator')  renderOperator();
+  if (name === 'profil')    renderProfile();
+}
+
+// ============================================================
+// RECORDING — dengan deteksi HTTPS & fallback lengkap
+// ============================================================
+async function toggleRecord() {
+  if (isRecording) {
+    stopRecording();
+  } else {
+    await startRecording();
+  }
+}
+
+async function startRecording() {
+  // 1. Cek HTTPS — wajib untuk mikrofon di Chrome Android
+  const isSecure = location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  if (!isSecure) {
+    showHttpsWarning();
+    return;
+  }
+
+  // 2. Cek MediaDevices API tersedia
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    showHttpsWarning('MediaDevices API tidak tersedia di browser ini.');
+    return;
+  }
+
+  // 3. Cek MediaRecorder tersedia
+  if (typeof MediaRecorder === 'undefined') {
+    showHttpsWarning('MediaRecorder tidak didukung browser ini. Gunakan Chrome terbaru.');
+    return;
+  }
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        sampleRate: 44100
+      }
+    });
+
+    // Pilih mime type yang didukung
+    const mime = getSupportedMime();
+    const recOptions = mime ? { mimeType: mime } : {};
+
+    audioChunks  = [];
+    try {
+      mediaRecorder = new MediaRecorder(stream, recOptions);
+    } catch(e) {
+      // Fallback tanpa opsi mime
+      mediaRecorder = new MediaRecorder(stream);
+    }
+
+    mediaRecorder.ondataavailable = e => {
+      if (e.data && e.data.size > 0) audioChunks.push(e.data);
+    };
+
+    mediaRecorder.onerror = (e) => {
+      showToast('Error perekaman: ' + (e.error?.message || 'tidak diketahui'), 'error');
+      resetRecordingUI();
+    };
+
+    mediaRecorder.onstop = () => {
+      stream.getTracks().forEach(t => t.stop());
+      if (audioChunks.length === 0) {
+        showToast('Rekaman kosong. Pastikan mikrofon berfungsi.', 'error');
+        resetRecordingUI();
+        return;
+      }
+      const finalMime = mediaRecorder.mimeType || mime || 'audio/webm';
+      audioBlob = new Blob(audioChunks, { type: finalMime });
+      if (audioBlob.size < 100) {
+        showToast('Audio terlalu pendek atau kosong. Coba lagi.', 'error');
+        resetRecordingUI();
+        return;
+      }
+      audioURL = URL.createObjectURL(audioBlob);
+      audioEl  = new Audio(audioURL);
+      audioEl.ontimeupdate = () => {
+        const pct = (audioEl.currentTime / (audioEl.duration || 1)) * 100;
+        document.getElementById('progress-fill').style.width = pct + '%';
+        document.getElementById('audio-dur-label').textContent = fmtTime(audioEl.currentTime);
+      };
+      audioEl.onended = () => {
+        document.getElementById('play-btn').textContent = '▶';
+        document.getElementById('progress-fill').style.width = '0%';
+        document.getElementById('audio-dur-label').textContent = fmtTime(audioEl.duration || 0);
+      };
+      showPreview();
+    };
+
+    // Start dengan timeslice 500ms agar data lebih sering tersedia
+    mediaRecorder.start(500);
+    isRecording = true;
+    recSeconds  = 0;
+
+    // UI recording
+    document.getElementById('mic-btn').className     = 'mic-btn recording';
+    document.getElementById('mic-icon').textContent  = '⏹️';
+    document.getElementById('mic-label').textContent = 'Berhenti';
+    document.getElementById('pulse-ring').className  = 'pulse-ring recording';
+    document.getElementById('waveform-wrap').style.display  = 'flex';
+    document.getElementById('record-timer').style.display   = 'block';
+    document.getElementById('record-hint').style.display    = 'none';
+    document.getElementById('https-warning').style.display  = 'none';
+    document.getElementById('manual-input-wrap').style.display = 'none';
+    document.getElementById('preview-wrap').style.display   = 'none';
+    document.getElementById('recent-label').style.display   = 'none';
+    document.getElementById('recent-list').style.display    = 'none';
+
+    recTimer = setInterval(() => {
+      recSeconds++;
+      document.getElementById('record-timer').textContent = fmtTime(recSeconds);
+    }, 1000);
+
+  } catch(err) {
+    console.error('Mic error:', err.name, err.message);
+    handleMicError(err);
+  }
+}
+
+function handleMicError(err) {
+  const name = err.name || '';
+  if (name === 'NotAllowedError' || name === 'PermissionDeniedError') {
+    showToast('Izin mikrofon ditolak. Ketuk ikon 🔒 di address bar → izinkan Mikrofon.', 'error');
+    showHttpsWarning('Izin mikrofon ditolak. Buka Pengaturan Chrome → Izin Situs → Mikrofon → Izinkan untuk halaman ini.');
+  } else if (name === 'NotFoundError' || name === 'DevicesNotFoundError') {
+    showToast('Mikrofon tidak ditemukan di perangkat ini.', 'error');
+  } else if (name === 'NotReadableError' || name === 'TrackStartError') {
+    showToast('Mikrofon sedang digunakan aplikasi lain. Tutup aplikasi lain lalu coba lagi.', 'error');
+  } else if (name === 'OverconstrainedError') {
+    // Coba lagi tanpa constraints
+    retryWithBasicConstraints();
+  } else if (name === 'SecurityError') {
+    showHttpsWarning('SecurityError: halaman harus diakses via HTTPS.');
+  } else {
+    showToast('Gagal akses mikrofon: ' + (err.message || err.name || 'error tidak diketahui'), 'error');
+    showHttpsWarning(err.message || err.name);
+  }
+}
+
+async function retryWithBasicConstraints() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioChunks  = [];
+    mediaRecorder = new MediaRecorder(stream);
+    mediaRecorder.ondataavailable = e => { if (e.data?.size > 0) audioChunks.push(e.data); };
+    mediaRecorder.onstop = () => {
+      stream.getTracks().forEach(t => t.stop());
+      audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+      audioURL  = URL.createObjectURL(audioBlob);
+      audioEl   = new Audio(audioURL);
+      audioEl.ontimeupdate = () => {
+        document.getElementById('progress-fill').style.width =
+          ((audioEl.currentTime / (audioEl.duration||1)) * 100) + '%';
+        document.getElementById('audio-dur-label').textContent = fmtTime(audioEl.currentTime);
+      };
+      audioEl.onended = () => {
+        document.getElementById('play-btn').textContent = '▶';
+        document.getElementById('audio-dur-label').textContent = fmtTime(audioEl.duration||0);
+      };
+      showPreview();
+    };
+    mediaRecorder.start(500);
+    isRecording = true; recSeconds = 0;
+    document.getElementById('mic-btn').className     = 'mic-btn recording';
+    document.getElementById('mic-icon').textContent  = '⏹️';
+    document.getElementById('mic-label').textContent = 'Berhenti';
+    document.getElementById('pulse-ring').className  = 'pulse-ring recording';
+    document.getElementById('waveform-wrap').style.display = 'flex';
+    document.getElementById('record-timer').style.display  = 'block';
+    document.getElementById('record-hint').style.display   = 'none';
+    recTimer = setInterval(() => { recSeconds++; document.getElementById('record-timer').textContent = fmtTime(recSeconds); }, 1000);
+  } catch(e) {
+    showToast('Mikrofon tetap tidak bisa diakses: ' + e.message, 'error');
+  }
+}
+
+function showHttpsWarning(extraMsg) {
+  const warn = document.getElementById('https-warning');
+  warn.style.display = 'block';
+  document.getElementById('record-hint').style.display = 'none';
+  if (extraMsg) {
+    const extra = document.createElement('p');
+    extra.style.cssText = 'font-size:11px;color:#9aa3bf;margin-top:8px;padding:8px 12px;background:#ffffff08;border-radius:6px;font-family:monospace';
+    extra.textContent = extraMsg;
+    const box = warn.querySelector('div');
+    if (!warn.querySelector('.extra-msg')) {
+      extra.className = 'extra-msg';
+      box.appendChild(extra);
+    }
+  }
+}
+
+function resetRecordingUI() {
+  isRecording = false;
+  clearInterval(recTimer);
+  document.getElementById('mic-btn').className     = 'mic-btn idle';
+  document.getElementById('mic-icon').textContent  = '🎙️';
+  document.getElementById('mic-label').textContent = 'Rekam';
+  document.getElementById('pulse-ring').className  = 'pulse-ring';
+  document.getElementById('waveform-wrap').style.display = 'none';
+  document.getElementById('record-timer').style.display  = 'none';
+  document.getElementById('record-hint').style.display   = 'block';
+}
+
+function getSupportedMime() {
+  const types = [
+    'audio/webm;codecs=opus',
+    'audio/webm',
+    'audio/ogg;codecs=opus',
+    'audio/ogg',
+    'audio/mp4',
+    'audio/mpeg'
+  ];
+  if (typeof MediaRecorder === 'undefined') return '';
+  return types.find(t => { try { return MediaRecorder.isTypeSupported(t); } catch(e) { return false; } }) || '';
+}
+
+// ── STOP RECORDING ───────────────────────────────────────────
+function stopRecording() {
+  if (mediaRecorder && isRecording) {
+    mediaRecorder.stop();
+    isRecording = false;
+    clearInterval(recTimer);
+    document.getElementById('mic-btn').className     = 'mic-btn processing';
+    document.getElementById('mic-icon').textContent  = '⏳';
+    document.getElementById('mic-label').textContent = 'Memproses...';
+    document.getElementById('pulse-ring').className  = 'pulse-ring';
+    document.getElementById('waveform-wrap').style.display = 'none';
+    document.getElementById('record-timer').style.display  = 'none';
+  }
+}
+function openHostingGuide() {
+  openModal('hosting');
+}
+function openNetlifyGuide() {
+  showToast('Buka netlify.com/drop → seret file nazareth-app.html → dapatkan URL HTTPS', 'info');
+}
+function tryInputFallback() {
+  document.getElementById('https-warning').style.display = 'none';
+  document.getElementById('manual-input-wrap').style.display = 'block';
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('man-tanggal').value = today;
+}
+function hideManualInput() {
+  document.getElementById('manual-input-wrap').style.display = 'none';
+  document.getElementById('https-warning').style.display = 'block';
+}
+
+// ── MANUAL TEXT INPUT → Gemini ────────────────────────────
+async function processManualInput() {
+  const judul  = document.getElementById('man-judul').value.trim();
+  const cerita = document.getElementById('man-cerita').value.trim();
+  const tgl    = document.getElementById('man-tanggal').value;
+  const hadir  = document.getElementById('man-hadir').value;
+
+  if (!cerita) { showToast('Ceritakan kegiatan terlebih dahulu', 'error'); return; }
+
+  // Buat "fake" audio result dari teks — proses via Gemini text API
+  document.getElementById('manual-input-wrap').style.display = 'none';
+  document.getElementById('preview-wrap').style.display = 'block';
+  document.getElementById('recent-label').style.display = 'none';
+  document.getElementById('recent-list').style.display  = 'none';
+  document.getElementById('rec-duration-label').textContent = 'Teks';
+  document.getElementById('audio-dur-label').textContent    = 'Manual';
+  document.getElementById('play-btn').textContent = '📝';
+  document.getElementById('play-btn').onclick = null;
+
+  setAiStatus('loading', 'Memproses teks dengan Gemini AI...');
+  document.getElementById('transcript-box').classList.remove('show');
+  document.getElementById('tags-preview').innerHTML = '';
+  document.getElementById('btn-send').disabled = true;
+  audioBlob = null; // tidak ada audio
+
+  // Proses teks dengan Gemini
+  await processTextWithGemini(judul, cerita, tgl, hadir);
+}
+
+async function processTextWithGemini(judul, cerita, tgl, hadir) {
+  if (!config.apikey) {
+    setAiStatus('error', 'API Key belum dikonfigurasi.');
+    aiResult = createFallbackResult(judul, tgl, cerita, hadir);
+    displayAiResult(aiResult);
+    return;
+  }
+
+  const today = tgl ? tgl.split('-').reverse().join('/') : new Date().toLocaleDateString('id-ID');
+
+  const prompt = `Kamu adalah asisten sekretariat GPIB Jemaat Nazareth.
+Proses laporan pelayanan berikut dan hasilkan output JSON.
+
+LAPORAN:
+Judul: ${judul || '(tidak disebutkan)'}
+Tanggal: ${today}
+Jumlah hadir: ${hadir || '0'}
+Cerita: ${cerita}
+
+MASTER TAG: ibadah, pelawatan, diakonia, katekisasi, komisi, pastoral, rapat, lainnya
+Sub-tag: sektor1-6, pwg, pkb, pemuda, pelayanan_anak, lansia, pelawatan_sakit, pelawatan_duka, diakonia_ekonomi, diakonia_kesehatan, diakonia_pendidikan
+Context: tindaklanjut, segera, perlu_doa, sukacita, duka, sakit, konflik
+
+Hasilkan JSON persis (tidak ada teks lain):
+{"judul":"...","tanggal":"${today}","jenis":"...","lokasi":"...","pelapor_jabatan":"...","jumlah_hadir":${hadir||0},"ringkasan":"...","kondisi_jemaat":"Baik/Perlu Perhatian","catatan_khusus":"...","tindak_lanjut":"Ya/Tidak","prioritas":"Segera/Bulan Ini/Ditunda/Tidak Ada","tag_utama":"#tag","tag_sub":["#tag"],"tag_konteks":["#tag"],"semua_tag":"#tag1 #tag2","nama_file":"YYYYMMDD_KODE_KODE_Deskripsi","summary_eksekutif":"..."}`;
+
+  try {
+    const data = await geminiRequest({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: { temperature: 0.2, maxOutputTokens: 1024 }
+    });
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    const match = text.match(/\{[\s\S]*\}/);
+    if (!match) throw new Error('Format respons tidak valid');
+    aiResult = JSON.parse(match[0]);
+    displayAiResult(aiResult);
+  } catch(e) {
+    aiResult = createFallbackResult(judul, today, cerita, hadir);
+    displayAiResult(aiResult);
+    setAiStatus('error', 'AI error (' + e.message + '). Data dasar tersimpan.');
+  }
+}
+
+function createFallbackResult(judul, tgl, ringkasan, hadir) {
+  const now = new Date();
+  const dd  = String(now.getDate()).padStart(2,'0');
+  const mm  = String(now.getMonth()+1).padStart(2,'0');
+  const yyyy= now.getFullYear();
+  return {
+    judul: judul || 'Laporan Pelayanan',
+    tanggal: tgl || dd+'/'+mm+'/'+yyyy,
+    jenis: 'Kegiatan Pelayanan',
+    lokasi: config.sector || '-',
+    pelapor_jabatan: config.name || '-',
+    jumlah_hadir: parseInt(hadir) || 0,
+    ringkasan: ringkasan || 'Laporan oleh ' + (config.name||'pelapor'),
+    kondisi_jemaat: 'Baik',
+    catatan_khusus: '',
+    tindak_lanjut: 'Tidak',
+    prioritas: 'Tidak Ada',
+    tag_utama: '#lainnya',
+    tag_sub: [], tag_konteks: [],
+    semua_tag: '#lainnya',
+    nama_file: yyyy+mm+dd+'_UMM_UMM_Laporan_Pelayanan',
+    summary_eksekutif: 'Laporan pelayanan oleh ' + (config.name||'pelapor') + ' pada ' + (tgl||dd+'/'+mm+'/'+yyyy) + '.'
+  };
+}
+
+async function showPreview() {
+  document.getElementById('mic-btn').className    = 'mic-btn idle';
+  document.getElementById('mic-icon').textContent = '🎙️';
+  document.getElementById('mic-label').textContent= 'Rekam lagi';
+  document.getElementById('record-hint').style.display   = 'block';
+  document.getElementById('preview-wrap').style.display  = 'block';
+  document.getElementById('recent-label').style.display  = 'none';
+  document.getElementById('recent-list').style.display   = 'none';
+  document.getElementById('rec-duration-label').textContent = fmtTime(recSeconds);
+  document.getElementById('audio-dur-label').textContent    = fmtTime(recSeconds);
+
+  // Reset AI UI
+  setAiStatus('loading', 'Mengirim ke Gemini AI untuk diproses...');
+  document.getElementById('transcript-box').classList.remove('show');
+  document.getElementById('transcript-box').textContent = '';
+  document.getElementById('tags-preview').innerHTML = '';
+  document.getElementById('btn-send').disabled = true;
+  aiResult = null;
+
+  await processWithGemini();
+}
+
+function playPreview() {
+  if (!audioEl) return;
+  if (audioEl.paused) {
+    audioEl.play();
+    document.getElementById('play-btn').textContent = '⏸';
+  } else {
+    audioEl.pause();
+    document.getElementById('play-btn').textContent = '▶';
+  }
+}
+
+function seekAudio(e) {
+  if (!audioEl || !audioEl.duration) return;
+  const rect = e.currentTarget.getBoundingClientRect();
+  const pct  = (e.clientX - rect.left) / rect.width;
+  audioEl.currentTime = pct * audioEl.duration;
+}
+
+function discardRecording() {
+  audioBlob = audioURL = audioEl = aiResult = null;
+  document.getElementById('preview-wrap').style.display = 'none';
+  document.getElementById('recent-label').style.display = 'block';
+  document.getElementById('recent-list').style.display  = 'block';
+  document.getElementById('mic-btn').className    = 'mic-btn idle';
+  document.getElementById('mic-icon').textContent = '🎙️';
+  document.getElementById('mic-label').textContent= 'Rekam';
+}
+
+// ============================================================
+// GEMINI AI PROCESSING
+// ============================================================
+
+// Model fallback list — dicoba berurutan jika model pertama tidak tersedia
+const GEMINI_MODELS = [
+  'gemini-2.0-flash',
+  'gemini-2.0-flash-lite',
+  'gemini-1.5-flash-latest',
+  'gemini-1.5-flash-002',
+  'gemini-1.5-flash-001',
+  'gemini-pro'
+];
+
+async function geminiRequest(bodyObj) {
+  for (const model of GEMINI_MODELS) {
+    try {
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${config.apikey}`,
+        { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(bodyObj) }
+      );
+      if (res.status === 404) continue; // model tidak ada, coba berikutnya
+      if (res.status === 400) {
+        const errData = await res.json();
+        const msg = errData?.error?.message || '';
+        if (msg.includes('not found') || msg.includes('not supported')) continue;
+        throw new Error(msg || 'Bad request');
+      }
+      if (!res.ok) { const e = await res.json(); throw new Error(e?.error?.message || 'HTTP '+res.status); }
+      return await res.json();
+    } catch(e) {
+      if (e.message && (e.message.includes('not found') || e.message.includes('not supported'))) continue;
+      throw e;
+    }
+  }
+  throw new Error('Semua model Gemini tidak tersedia. Cek API Key di aistudio.google.com');
+}
+
+async function processWithGemini() {
+  if (!config.apikey) {
+    setAiStatus('error', 'API Key belum dikonfigurasi. Buka Pengaturan.');
+    return;
+  }
+
+  try {
+    const base64   = await blobToBase64(audioBlob);
+    const mimeType = audioBlob.type || 'audio/webm';
+
+    const prompt = `Kamu adalah asisten sekretariat GPIB Jemaat Nazareth. 
+Proses rekaman audio laporan pelayanan berikut dan hasilkan output JSON.
+
+MASTER TAG LIST yang tersedia:
+- Layer 1 (pilih 1): ibadah, pelawatan, diakonia, katekisasi, komisi, pastoral, rapat, lainnya
+- Layer 2 (boleh beberapa): sektor1, sektor2, sektor3, sektor4, sektor5, sektor6, pwg, pkb, pemuda, pelayanan_anak, lansia, online, ibadah_sektor, ibadah_minggu, pelawatan_sakit, pelawatan_duka, pelawatan_rutin, diakonia_ekonomi, diakonia_kesehatan, diakonia_pendidikan, pembinaan, retreat, ekumenis
+- Layer 3 (situasional): tindaklanjut, segera, perlu_doa, sukacita, duka, sakit, konflik
+
+Hasilkan output JSON persis dengan struktur ini (tidak ada teks lain di luar JSON):
+{
+  "judul": "judul singkat kegiatan 3-5 kata",
+  "tanggal": "tanggal dari audio atau hari ini DD/MM/YYYY",
+  "jenis": "jenis kegiatan",
+  "lokasi": "lokasi kegiatan",
+  "pelapor_jabatan": "jabatan pelapor yang disebutkan",
+  "jumlah_hadir": angka atau 0,
+  "ringkasan": "ringkasan 2-3 kalimat",
+  "kondisi_jemaat": "Baik / Perlu Perhatian",
+  "catatan_khusus": "kondisi khusus atau kosong",
+  "tindak_lanjut": "Ya/Tidak",
+  "prioritas": "Segera/Bulan Ini/Ditunda/Tidak Ada",
+  "tag_utama": "#tag_layer1",
+  "tag_sub": ["#tag1","#tag2"],
+  "tag_konteks": ["#tag_konteks"],
+  "semua_tag": "#tag1 #tag2 #tag3",
+  "nama_file": "YYYYMMDD_KODE_KODE_Deskripsi_Singkat",
+  "summary_eksekutif": "Narasi 2 kalimat untuk PHMJ"
+}`;
+
+    const response = await geminiRequest({
+      contents: [{
+        parts: [
+          { text: prompt },
+          { inline_data: { mime_type: mimeType, data: base64 } }
+        ]
+      }],
+      generationConfig: { temperature: 0.2, maxOutputTokens: 1024 }
+    });
+
+    const text = response.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('Format respons AI tidak valid');
+    aiResult = JSON.parse(jsonMatch[0]);
+    displayAiResult(aiResult);
+
+  } catch(e) {
+    console.error('Gemini error:', e);
+    // Fallback: create basic result without AI
+    aiResult = createFallbackResult();
+    displayAiResult(aiResult);
+    setAiStatus('error', 'AI tidak tersedia. Data dasar tersimpan. (' + e.message + ')');
+  }
+}
+
+function createFallbackResult() {
+  const now = new Date();
+  const dd = String(now.getDate()).padStart(2,'0');
+  const mm = String(now.getMonth()+1).padStart(2,'0');
+  const yyyy = now.getFullYear();
+  return {
+    judul: 'Laporan Pelayanan',
+    tanggal: dd+'/'+mm+'/'+yyyy,
+    jenis: 'Kegiatan Pelayanan',
+    lokasi: config.sector || '-',
+    pelapor_jabatan: config.name || '-',
+    jumlah_hadir: 0,
+    ringkasan: 'Laporan direkam oleh ' + (config.name||'pelapor') + '. Transkripsi manual diperlukan.',
+    kondisi_jemaat: 'Baik',
+    catatan_khusus: '',
+    tindak_lanjut: 'Tidak',
+    prioritas: 'Tidak Ada',
+    tag_utama: '#lainnya',
+    tag_sub: [],
+    tag_konteks: [],
+    semua_tag: '#lainnya',
+    nama_file: yyyy+mm+dd+'_UMM_UMM_Laporan_Pelayanan',
+    summary_eksekutif: 'Laporan pelayanan oleh ' + (config.name||'pelapor') + ' pada ' + dd+'/'+mm+'/'+yyyy + '.'
+  };
+}
+
+function displayAiResult(res) {
+  setAiStatus('done', 'Diproses AI ✓ — Siap dikirim');
+
+  // Transcript / summary
+  const box = document.getElementById('transcript-box');
+  box.textContent = res.ringkasan || '-';
+  box.classList.add('show');
+
+  // Tags
+  const tagsWrap = document.getElementById('tags-preview');
+  tagsWrap.innerHTML = '';
+  const allTags = (res.semua_tag || '').split(' ').filter(Boolean);
+  allTags.forEach(tag => {
+    const span = document.createElement('span');
+    span.className = 'tg ' + tagColor(tag);
+    span.textContent = tag;
+    tagsWrap.appendChild(span);
+  });
+
+  // Enable send
+  document.getElementById('btn-send').disabled = false;
+  document.getElementById('btn-send-label').textContent = '📤 Simpan Laporan';
+}
+
+function tagColor(tag) {
+  if (tag.includes('segera') || tag.includes('tindaklanjut') || tag.includes('sakit') || tag.includes('duka')) return 'tg-red';
+  if (tag.includes('diakonia')) return 'tg-amber';
+  if (tag.includes('ibadah'))   return 'tg-teal';
+  if (tag.includes('pelawatan')) return 'tg-green';
+  if (tag.includes('katekisasi') || tag.includes('pembinaan')) return 'tg-purple';
+  if (tag.includes('sukacita') || tag.includes('komisi')) return 'tg-gold';
+  return 'tg-teal';
+}
+
+function setAiStatus(state, text) {
+  document.getElementById('ai-dot').className  = 'ai-dot ' + state;
+  document.getElementById('ai-status-text').textContent = text;
+}
+
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result.split(',')[1]);
+    reader.onerror   = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+// ============================================================
+// SUBMIT REPORT — localStorage + Google Sheets sync
+// ============================================================
+async function submitReport() {
+  if (!aiResult) return;
+  const btn = document.getElementById('btn-send');
+  btn.disabled = true;
+  document.getElementById('send-spinner').style.display = 'inline-block';
+  document.getElementById('btn-send-label').textContent = 'Menyimpan...';
+
+  const report = {
+    id:        Date.now().toString(),
+    timestamp: new Date().toISOString(),
+    pelapor:   config.name,
+    role:      config.role,
+    sector:    config.sector,
+    status:    'pending',
+    audioSize: audioBlob ? Math.round(audioBlob.size / 1024) : 0,
+    appVersion:'1.1',
+    syncedToSheets: false,
+    ...aiResult
+  };
+
+  // 1. Simpan lokal dulu — selalu berhasil
+  reports.unshift(report);
+  saveReports();
+  discardRecording();
+  renderRecentList();
+  updateNotifBadge();
+
+  // 2. Sinkron ke Google Sheets jika scriptUrl tersedia
+  if (config.scriptUrl) {
+    document.getElementById('btn-send-label').textContent = 'Sinkron ke Sheets...';
+    const synced = await pushToSheets('submit_report', report);
+    if (synced.ok) {
+      reports[0].syncedToSheets = true;
+      reports[0].sheetsId = synced.id || report.id;
+      saveReports();
+      showToast('✅ Tersimpan + terkirim ke Google Sheets!', 'success');
+    } else {
+      showToast('💾 Tersimpan lokal. Sheets: ' + (synced.error || 'gagal sinkron'), 'info');
+    }
+  } else {
+    showToast('💾 Laporan tersimpan lokal!', 'success');
+  }
+
+  document.getElementById('send-spinner').style.display = 'none';
+  document.getElementById('btn-send-label').textContent = '📤 Simpan Laporan';
+  btn.disabled = false;
+}
+
+// ============================================================
+// PUSH TO GOOGLE SHEETS via Apps Script
+// ============================================================
+async function pushToSheets(action, data) {
+  try {
+    const res = await fetch(config.scriptUrl, {
+      method:  'POST',
+      headers: { 'Content-Type': 'text/plain' }, // Apps Script CORS workaround
+      body:    JSON.stringify({ action, data })
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return await res.json();
+  } catch(e) {
+    return { ok: false, error: e.message };
+  }
+}
+
+// ============================================================
+// SYNC PENDING — kirim ulang laporan yang belum tersinkron
+// ============================================================
+async function syncPendingToSheets() {
+  if (!config.scriptUrl) return;
+  const unsynced = reports.filter(r => !r.syncedToSheets);
+  if (!unsynced.length) { showToast('Semua laporan sudah tersinkron ✓', 'success'); return; }
+
+  showToast('⏳ Menyinkron ' + unsynced.length + ' laporan...', 'info');
+  let ok = 0;
+  for (const r of unsynced) {
+    const res = await pushToSheets('submit_report', r);
+    if (res.ok) {
+      const idx = reports.findIndex(x => x.id === r.id);
+      if (idx !== -1) { reports[idx].syncedToSheets = true; }
+      ok++;
+    }
+  }
+  saveReports();
+  renderProfile();
+  showToast('✅ ' + ok + '/' + unsynced.length + ' laporan tersinkron ke Sheets', 'success');
+}
+
+// ============================================================
+// RENDER: RECENT LIST (Pelapor)
+// ============================================================
+function renderRecentList() {
+  const list = document.getElementById('recent-list');
+  const myReports = reports.filter(r => r.pelapor === config.name).slice(0, 10);
+
+  if (!myReports.length) {
+    list.innerHTML = `<div class="empty-state"><div class="es-icon">📋</div><p>Belum ada laporan.<br>Tekan tombol rekam untuk mulai.</p></div>`;
+    return;
+  }
+
+  list.innerHTML = myReports.map(r => `
+    <div class="report-item" onclick="showReportDetail('${r.id}')">
+      <div class="rep-dot" style="background:${statusColor(r.status)}"></div>
+      <div class="rep-info">
+        <div class="rep-title">${r.judul || 'Laporan Pelayanan'}</div>
+        <div class="rep-meta">${r.tanggal || '-'} · ${r.semua_tag || ''}</div>
+      </div>
+      <span class="rep-badge ${statusBadge(r.status)}">${statusLabel(r.status)}</span>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// RENDER: OPERATOR
+// ============================================================
+function renderOperator() {
+  const pending = reports.filter(r => r.status === 'pending');
+  const done    = reports.filter(r => r.status === 'verified');
+
+  document.getElementById('op-stat-pending').textContent = pending.length;
+  document.getElementById('op-stat-done').textContent    = done.length;
+
+  const inboxList = document.getElementById('op-inbox-list');
+  if (!pending.length) {
+    inboxList.innerHTML = `<div class="empty-state"><div class="es-icon">✅</div><p>Semua laporan sudah diproses.</p></div>`;
+  } else {
+    inboxList.innerHTML = pending.map(r => buildInboxItem(r)).join('');
+  }
+
+  const doneList = document.getElementById('op-done-list');
+  if (!done.length) {
+    doneList.innerHTML = '';
+  } else {
+    doneList.innerHTML = done.slice(0,5).map(r => `
+      <div class="report-item" onclick="showReportDetail('${r.id}')">
+        <div class="rep-dot" style="background:var(--green)"></div>
+        <div class="rep-info">
+          <div class="rep-title">${r.judul || '-'}</div>
+          <div class="rep-meta">${r.pelapor} · ${r.tanggal || '-'}</div>
+        </div>
+        <span class="rep-badge badge-done">✓ Selesai</span>
+      </div>
+    `).join('');
+  }
+}
+
+function buildInboxItem(r) {
+  const tags = (r.semua_tag||'').split(' ').filter(Boolean).slice(0,5)
+    .map(t => `<span class="tg ${tagColor(t)}">${t}</span>`).join('');
+  return `
+    <div class="inbox-item" id="inbox-${r.id}">
+      <div class="inbox-top" onclick="toggleInbox('${r.id}')">
+        <div class="inbox-av new">🎙️</div>
+        <div class="inbox-meta">
+          <div class="inbox-name">${r.pelapor} — ${r.jenis||'Pelayanan'}</div>
+          <div class="inbox-detail">${r.sector||''} · AI diproses ✓</div>
+        </div>
+        <span class="inbox-time">${timeAgo(r.timestamp)}</span>
+      </div>
+      <div class="inbox-body" id="inbox-body-${r.id}">
+        <div class="transcript-excerpt">"${r.ringkasan||'-'}"</div>
+        <div class="op-tags">${tags}</div>
+        <div class="op-actions">
+          <button class="btn-submit-op" onclick="verifyReport('${r.id}')">✅ Verifikasi & Simpan</button>
+          <button class="btn-edit-op" onclick="showReportDetail('${r.id}')">👁️ Detail</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function toggleInbox(id) {
+  const body = document.getElementById('inbox-body-' + id);
+  body.classList.toggle('open');
+}
+
+function verifyReport(id) {
+  const idx = reports.findIndex(r => r.id === id);
+  if (idx === -1) return;
+  reports[idx].status      = 'verified';
+  reports[idx].verified_by = config.name;
+  reports[idx].verified_at = new Date().toISOString();
+  saveReports();
+
+  // Sync verification ke Sheets
+  if (config.scriptUrl) {
+    pushToSheets('verify_report', {
+      id,
+      verified_by: config.name,
+      verified_at: reports[idx].verified_at
+    }).then(res => {
+      if (res.ok) showToast('✅ Terverifikasi + Sheets diupdate!', 'success');
+      else        showToast('✅ Terverifikasi lokal (Sheets: ' + res.error + ')', 'info');
+    });
+  } else {
+    showToast('✅ Laporan diverifikasi!', 'success');
+  }
+
+  renderOperator();
+  updateNotifBadge();
+}
+
+// ============================================================
+// RENDER: DASHBOARD
+// ============================================================
+function renderDashboard() {
+  const verified = reports.filter(r => r.status === 'verified');
+  const segera   = reports.filter(r => (r.semua_tag||'').includes('#segera'));
+  const totalHadir = reports.reduce((s, r) => s + (parseInt(r.jumlah_hadir)||0), 0);
+
+  document.getElementById('kpi-total').textContent   = reports.length;
+  document.getElementById('kpi-hadir').textContent   = totalHadir;
+  document.getElementById('kpi-segera').textContent  = segera.length;
+  document.getElementById('kpi-selesai').textContent = verified.length;
+
+  const now = new Date();
+  document.getElementById('dash-update-label').textContent =
+    'Update: ' + now.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'});
+
+  // Category chart
+  const cats = {};
+  reports.forEach(r => {
+    const t = (r.tag_utama || '#lainnya').replace('#','');
+    cats[t] = (cats[t]||0) + 1;
+  });
+  const catColors = {ibadah:'#3b82f6',pelawatan:'#22c55e',diakonia:'#f59e0b',katekisasi:'#8b5cf6',komisi:'#ec4899',pastoral:'#ef4444',rapat:'#64748b',lainnya:'#6b7494'};
+  const maxCat = Math.max(...Object.values(cats), 1);
+  document.getElementById('category-chart').innerHTML = Object.entries(cats)
+    .sort((a,b)=>b[1]-a[1]).slice(0,6)
+    .map(([k,v]) => `
+      <div class="bar-r">
+        <span class="bar-lbl">${k}</span>
+        <div class="bar-trk"><div class="bar-fil" style="width:${(v/maxCat*100).toFixed(0)}%;background:${catColors[k]||'#6b7494'}"></div></div>
+        <span class="bar-num">${v}</span>
+      </div>
+    `).join('') || '<div style="font-size:12px;color:var(--muted);padding:8px 0">Belum ada data</div>';
+
+  // Alerts
+  const alertList = document.getElementById('alert-list');
+  if (!segera.length) {
+    alertList.innerHTML = `<div class="empty-state" style="padding:20px 24px"><p style="font-size:12px">Tidak ada item mendesak saat ini.</p></div>`;
+  } else {
+    alertList.innerHTML = segera.map(r => `
+      <div class="alert-item" onclick="showReportDetail('${r.id}')">
+        <div class="alert-pulse"></div>
+        <div class="alert-info">
+          <h5>${r.judul||'Laporan'} — ${r.sector||r.pelapor}</h5>
+          <p>${r.catatan_khusus || r.ringkasan?.substring(0,60) || '-'}</p>
+        </div>
+        <span class="alert-time">${timeAgo(r.timestamp)}</span>
+      </div>
+    `).join('');
+  }
+
+  // All reports
+  document.getElementById('all-reports-list').innerHTML = reports.slice(0,20).map(r => `
+    <div class="report-item" onclick="showReportDetail('${r.id}')">
+      <div class="rep-dot" style="background:${statusColor(r.status)}"></div>
+      <div class="rep-info">
+        <div class="rep-title">${r.judul||'Laporan'}</div>
+        <div class="rep-meta">${r.pelapor} · ${r.tanggal||'-'} · ${(r.semua_tag||'').split(' ').slice(0,3).join(' ')}</div>
+      </div>
+      <span class="rep-badge ${statusBadge(r.status)}">${statusLabel(r.status)}</span>
+    </div>
+  `).join('') || '<div class="empty-state"><div class="es-icon">📊</div><p>Belum ada laporan masuk.</p></div>';
+}
+
+// ============================================================
+// AI CHAT (Dashboard)
+// ============================================================
+async function sendAiQuery() {
+  const input = document.getElementById('ai-query');
+  const query = input.value.trim();
+  if (!query) return;
+  input.value = '';
+
+  // Add user message
+  addAiMessage('user', query);
+
+  // Build context from reports
+  const ctx = reports.slice(0,30).map(r =>
+    `[${r.tanggal}] ${r.judul} | ${r.pelapor} | Tags: ${r.semua_tag} | ${r.ringkasan}`
+  ).join('\n');
+
+  const prompt = `Kamu adalah asisten analisis pastoral untuk GPIB Jemaat Nazareth. 
+Jawab pertanyaan PHMJ berdasarkan data laporan berikut. Jawaban singkat dan informatif, dalam Bahasa Indonesia.
+
+DATA LAPORAN (${reports.length} laporan):
+${ctx || 'Belum ada data laporan'}
+
+PERTANYAAN: ${query}`;
+
+  addAiMessage('bot', '<span class="spinner"></span> Menganalisis...');
+
+  try {
+    const data = await geminiRequest({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: { temperature: 0.4, maxOutputTokens: 512 }
+    });
+    const answer = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Maaf, tidak bisa menganalisis saat ini.';
+    updateLastBotMessage(answer);
+  } catch(e) {
+    updateLastBotMessage('Tidak bisa terhubung ke AI: ' + e.message);
+  }
+}
+
+function addAiMessage(role, text) {
+  const msgs = document.getElementById('ai-messages');
+  const div  = document.createElement('div');
+  div.className = 'ai-msg ' + role;
+  div.innerHTML = `<div class="ai-bubble">${text}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function updateLastBotMessage(text) {
+  const msgs  = document.getElementById('ai-messages');
+  const bots  = msgs.querySelectorAll('.ai-msg.bot');
+  const last  = bots[bots.length - 1];
+  if (last) last.querySelector('.ai-bubble').innerHTML = text;
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+// ============================================================
+// REPORT DETAIL MODAL
+// ============================================================
+function showReportDetail(id) {
+  const r = reports.find(r => r.id === id);
+  if (!r) return;
+
+  const tags = (r.semua_tag||'').split(' ').filter(Boolean)
+    .map(t => `<span class="tg ${tagColor(t)}">${t}</span>`).join(' ');
+
+  document.getElementById('detail-content').innerHTML = `
+    <div class="modal-handle"></div>
+    <div class="modal-title">${r.judul || 'Detail Laporan'}</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:16px">${tags}</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
+      ${detailField('📅 Tanggal', r.tanggal||'-')}
+      ${detailField('👤 Pelapor', r.pelapor||'-')}
+      ${detailField('📍 Lokasi', r.lokasi||'-')}
+      ${detailField('👥 Hadir', r.jumlah_hadir||'0')}
+      ${detailField('⚡ Status', statusLabel(r.status))}
+      ${detailField('🎯 Prioritas', r.prioritas||'-')}
+    </div>
+
+    <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Ringkasan</div>
+    <div style="font-size:13px;color:var(--muted2);line-height:1.7;background:var(--panel2);border-radius:10px;padding:12px;margin-bottom:12px">${r.ringkasan||'-'}</div>
+
+    ${r.catatan_khusus ? `
+    <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Catatan Khusus</div>
+    <div style="font-size:13px;color:var(--muted2);line-height:1.7;background:#ef444410;border:1px solid #ef444428;border-radius:10px;padding:12px;margin-bottom:12px">${r.catatan_khusus}</div>
+    ` : ''}
+
+    <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Summary Eksekutif</div>
+    <div style="font-size:13px;color:var(--muted2);line-height:1.7;background:var(--gold-dim);border:1px solid #c9943a28;border-radius:10px;padding:12px;margin-bottom:16px">${r.summary_eksekutif||'-'}</div>
+
+    <div style="font-size:10px;color:var(--muted);margin-bottom:4px">Nama file arsip:</div>
+    <div style="font-family:monospace;font-size:11px;color:var(--teal);background:var(--panel2);padding:8px 12px;border-radius:8px;margin-bottom:16px;word-break:break-all">${r.nama_file||'-'}.txt</div>
+
+    ${r.status === 'pending' ? `
+    <button class="btn-primary" onclick="verifyReport('${r.id}');closeModal('detail')">✅ Verifikasi Laporan Ini</button>
+    ` : ''}
+  `;
+  openModal('detail');
+}
+
+function detailField(label, value) {
+  return `<div style="background:var(--panel2);border-radius:8px;padding:10px 12px">
+    <div style="font-size:10px;color:var(--muted);margin-bottom:2px">${label}</div>
+    <div style="font-size:13px;font-weight:600">${value}</div>
+  </div>`;
+}
+
+// ============================================================
+// PROFILE
+// ============================================================
+function renderProfile() {
+  const myReps   = reports.filter(r => r.pelapor === config.name);
+  const now      = new Date();
+  const thisMonth = now.getMonth();
+  const thisYear  = now.getFullYear();
+  const monthReps = myReps.filter(r => {
+    const d = new Date(r.timestamp);
+    return d.getMonth() === thisMonth && d.getFullYear() === thisYear;
+  });
+  document.getElementById('my-total').textContent = myReps.length;
+  document.getElementById('my-month').textContent = monthReps.length;
+
+  // Sync status
+  const unsynced = reports.filter(r => !r.syncedToSheets).length;
+  const syncLabel = document.getElementById('sync-btn-label');
+  if (syncLabel) {
+    syncLabel.textContent = unsynced > 0
+      ? `Sinkron ${unsynced} laporan ke Google Sheets`
+      : 'Semua laporan sudah tersinkron ✓';
+  }
+
+  // Sheets status indicator
+  const sheetStatus = config.scriptUrl
+    ? '🟢 Sheets terhubung'
+    : '⚪ Sheets belum dikonfigurasi';
+  document.getElementById('profile-sector').textContent =
+    (config.sector || '-') + '  ·  ' + sheetStatus;
+}
+
+async function testSheetsConnection() {
+  if (!config.scriptUrl) {
+    showToast('⚠️ Apps Script URL belum diisi di Pengaturan', 'error');
+    return;
+  }
+  showToast('⏳ Menguji koneksi...', 'info');
+  const res = await pushToSheets('ping', {});
+  if (res.ok) {
+    showToast('🟢 Koneksi Sheets berhasil! ' + (res.msg||''), 'success');
+  } else {
+    showToast('🔴 Gagal terhubung: ' + (res.error||'periksa URL'), 'error');
+  }
+}
+
+// ============================================================
+// SETTINGS
+// ============================================================
+function openSettings() {
+  document.getElementById('set-name').value      = config.name      || '';
+  document.getElementById('set-role').value      = config.role      || 'pelapor';
+  document.getElementById('set-sector').value    = config.sector    || '';
+  document.getElementById('set-apikey').value    = config.apikey    || '';
+  document.getElementById('set-scripturl').value = config.scriptUrl || '';
+  openModal('settings');
+}
+
+function saveSettings() {
+  config.name      = document.getElementById('set-name').value.trim();
+  config.role      = document.getElementById('set-role').value;
+  config.sector    = document.getElementById('set-sector').value.trim();
+  config.apikey    = document.getElementById('set-apikey').value.trim();
+  config.scriptUrl = document.getElementById('set-scripturl').value.trim();
+  localStorage.setItem(CONF_KEY, JSON.stringify(config));
+  closeModal('settings');
+  applyConfig();
+  showToast('Pengaturan disimpan', 'success');
+}
+
+// ============================================================
+// NOTIFICATIONS
+// ============================================================
+function updateNotifBadge() {
+  const pending = reports.filter(r => r.status === 'pending').length;
+  const badge   = document.getElementById('notif-badge');
+  badge.classList.toggle('show', pending > 0);
+}
+
+function showNotifPanel() {
+  const pending = reports.filter(r => r.status === 'pending');
+  if (!pending.length) { showToast('Tidak ada notifikasi baru', 'info'); return; }
+  showToast(`📥 ${pending.length} laporan menunggu verifikasi`, 'info');
+  switchScreen('operator');
+}
+
+// ============================================================
+// EXPORT
+// ============================================================
+function exportData() {
+  const data = JSON.stringify(reports, null, 2);
+  const blob = new Blob([data], {type:'application/json'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  a.download = 'laporan_nazareth_' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  showToast('📤 Data diekspor', 'success');
+}
+
+function clearAllData() {
+  if (!confirm('Hapus semua data laporan lokal? Tindakan ini tidak bisa dibatalkan.')) return;
+  reports = [];
+  saveReports();
+  renderAll();
+  showToast('Data dihapus', 'info');
+}
+
+// ============================================================
+// UTILITIES
+// ============================================================
+function saveReports() { localStorage.setItem(DB_KEY, JSON.stringify(reports)); }
+
+function renderAll() {
+  renderRecentList();
+  updateNotifBadge();
+}
+
+function statusColor(s) {
+  if (s === 'verified') return 'var(--green)';
+  if (s === 'pending')  return 'var(--amber)';
+  return 'var(--muted)';
+}
+function statusBadge(s) {
+  if (s === 'verified') return 'badge-done';
+  if (s === 'pending')  return 'badge-pending';
+  return 'badge-process';
+}
+function statusLabel(s) {
+  if (s === 'verified') return '✓ Terverifikasi';
+  if (s === 'pending')  return '⏳ Menunggu';
+  return '📋 Draft';
+}
+
+function fmtTime(s) {
+  const sec = Math.floor(s || 0);
+  return Math.floor(sec/60) + ':' + String(sec%60).padStart(2,'0');
+}
+
+function timeAgo(ts) {
+  const diff = (Date.now() - new Date(ts)) / 1000;
+  if (diff < 60)   return Math.floor(diff) + 'd';
+  if (diff < 3600) return Math.floor(diff/60) + 'm';
+  if (diff < 86400)return Math.floor(diff/3600) + 'j';
+  return Math.floor(diff/86400) + ' hari';
+}
+
+function showToast(msg, type = 'info') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function openModal(name) {
+  document.getElementById('modal-' + name).classList.add('open');
+}
+function closeModal(name) {
+  document.getElementById('modal-' + name).classList.remove('open');
+}
+
+// ============================================================
+// HTTPS CHECK ON LOAD
+// ============================================================
+function checkHttpsOnLoad() {
+  const isSecure = location.protocol === 'https:'
+    || location.hostname === 'localhost'
+    || location.hostname === '127.0.0.1';
+
+  if (!isSecure) {
+    // Tampilkan warning ringan di bawah tombol rekam
+    setTimeout(() => {
+      const warn = document.getElementById('https-warning');
+      if (warn) {
+        warn.style.display = 'block';
+        document.getElementById('record-hint').style.display = 'none';
+        // Update mic button jadi warning state
+        document.getElementById('mic-btn').className     = 'mic-btn processing';
+        document.getElementById('mic-icon').textContent  = '⚠️';
+        document.getElementById('mic-label').textContent = 'Perlu HTTPS';
+      }
+    }, 300);
+  }
+}
+
+// ============================================================
+// BOOT
+// ============================================================
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
